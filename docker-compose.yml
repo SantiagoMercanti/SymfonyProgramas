@@ -1,0 +1,51 @@
+services:
+  app:
+    build:
+      context: ./docker/php-apache
+    container_name: ddd_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"            # Apache (Symfony) => http://localhost:8080
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html/public
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: ddd_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ddd_db
+      MYSQL_USER: ddd_user
+      MYSQL_PASSWORD: ddd_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: ddd_pma
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: ddd_user
+      PMA_PASSWORD: ddd_pass
+    ports:
+      - "8081:80"            # phpMyAdmin => http://localhost:8081
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

@@ -16,28 +16,25 @@ class TipoActividadRepository extends ServiceEntityRepository
         parent::__construct($registry, TipoActividad::class);
     }
 
-    //    /**
-    //     * @return TipoActividad[] Returns an array of TipoActividad objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /** @return TipoActividad[] */
+    public function findActivos(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.activo = :a')
+            ->setParameter('a', true)
+            ->orderBy('t.tipoActividad', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?TipoActividad
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findOneActivoById(int $id): ?TipoActividad
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.id = :id')
+            ->andWhere('t.activo = :a')
+            ->setParameter('id', $id)
+            ->setParameter('a', true)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

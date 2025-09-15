@@ -16,28 +16,25 @@ class ModalidadEncuentroRepository extends ServiceEntityRepository
         parent::__construct($registry, ModalidadEncuentro::class);
     }
 
-    //    /**
-    //     * @return ModalidadEncuentro[] Returns an array of ModalidadEncuentro objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /** @return ModalidadEncuentro[] */
+    public function findActivos(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.activo = :a')
+            ->setParameter('a', true)
+            ->orderBy('m.modalidadEncuentro', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?ModalidadEncuentro
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findOneActivoById(int $id): ?ModalidadEncuentro
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.id = :id')
+            ->andWhere('m.activo = :a')
+            ->setParameter('id', $id)
+            ->setParameter('a', true)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -6,6 +6,7 @@ use App\Repository\ModalidadEncuentroRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ModalidadEncuentroRepository::class)]
 #[ORM\Table(name: 'modalidad_encuentro')] // ajustar el nombre de la tabla en MySQL
@@ -14,13 +15,16 @@ class ModalidadEncuentro
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_modalidad_encuentro', type: 'integer')] // ajustar el nombre de la columna en MySQL
+    #[Groups(['mod:list', 'mod:detail'])]
     private ?int $id = null;
 
     #[ORM\Column(name: 'modalidad_encuentro', type: 'string', length: 50, nullable: true)] // ajustar el nombre de la columna en MySQL
+    #[Groups(['mod:list', 'mod:detail'])]
     private ?string $modalidadEncuentro = null;
 
     // Soft-delete: activo = true por defecto (no nullable)
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
+    #[Groups(['mod:detail'])]
     private bool $activo = true;
 
     /**
@@ -33,7 +37,7 @@ class ModalidadEncuentro
     {
         $this->encuentros = new ArrayCollection();
     }
-    
+
     // --- Getters/Setters ---
     public function getId(): ?int
     {

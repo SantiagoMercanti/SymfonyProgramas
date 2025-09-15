@@ -6,6 +6,7 @@ use App\Repository\TipoActividadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TipoActividadRepository::class)]
 #[ORM\Table(name: 'tipo_actividad')] // ajustar el nombre de la tabla en MySQL
@@ -14,13 +15,16 @@ class TipoActividad
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_tipo_actividad', type: 'integer')] // ajustar el nombre de la columna en MySQL
+    #[Groups(['tipo:list','tipo:detail'])]
     private ?int $id = null;
 
+    #[Groups(['tipo:list','tipo:detail'])]
     #[ORM\Column(name: 'tipo_actividad', type: 'string', length: 100, nullable: false)]
     private string $tipoActividad;
 
     // Soft-delete: activo = true por defecto (no nullable)
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
+    #[Groups(['tipo:detail'])]
     private bool $activo = true;
 
     /**

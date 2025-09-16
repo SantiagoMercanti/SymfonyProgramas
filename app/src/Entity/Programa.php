@@ -6,6 +6,7 @@ use App\Repository\ProgramaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProgramaRepository::class)]
 #[ORM\Table(name: 'programa')] // ajustar el nombre de la tabla en MySQL
@@ -14,19 +15,23 @@ class Programa
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_programa', type: 'integer')]
+    #[Groups(['programa:list'])]
     private ?int $id = null;
 
     #[ORM\Column(name: 'programa', type: 'string', length: 100, nullable: true)]
+    #[Groups(['programa:list'])]
     private ?string $programa = null;
 
     #[ORM\Column(name: 'descripcion', type: 'text', nullable: true)]
     private ?string $descripcion = null;
 
     #[ORM\Column(name: 'vigente', type: 'boolean', nullable: true, options: ['default' => true])]
+    #[Groups(['programa:list'])]
     private ?bool $vigente = true;
 
     // Soft-delete: activo = true por defecto
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
+    #[Groups(['programa:list'])]
     private bool $activo = true;
 
     /**

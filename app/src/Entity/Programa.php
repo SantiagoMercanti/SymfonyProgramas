@@ -120,6 +120,7 @@ class Programa
         return $this;
     }
 
+    // revisar, tener en cuenta delete logico, quisas removeActividad no haya que configurarlo
     public function removeActividad(Actividad $actividad): static
     {
         if ($this->actividades->removeElement($actividad)) {

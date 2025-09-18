@@ -43,6 +43,7 @@ class ProgramaController extends AbstractController
 
         $qb = $this->pm->qbListado($filters);
 
+        // La qb debería ejecutarla el paginador pero en el manager
         // $pagination = $paginator->paginate($qb, $page, $perPage);
         $pagination = $paginator->paginate(
             $qb,
@@ -59,7 +60,7 @@ class ProgramaController extends AbstractController
         return $this->json(
             [
                 'items'   => $pagination->getItems(),
-                'total'   => $pagination->getTotalItemCount(),
+                'total'   => $pagination->getTotalItemCount(), // ver eficiencia, se suele usar otra api que obtiene el count
                 'page'    => $page,
                 'perPage' => $perPage,
                 'pages'   => (int) ceil($pagination->getTotalItemCount() / $perPage),
@@ -75,6 +76,7 @@ class ProgramaController extends AbstractController
     // ---------------------------
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
+    // public function show(Programa $programa): JsonResponse // ParamConverter (pero sin control de activo)
     {
         // Política: mostramos solo activos por defecto
         $programa = $this->pm->obtenerActivoPorId($id); // lanzar 404 si no existe/inactivo

@@ -13,8 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 #[Route('/api/programas', name: 'api_programas_')]
 class ProgramaController extends AbstractController
@@ -96,8 +96,15 @@ class ProgramaController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator
     ): JsonResponse {
-        /** @var CreateProgramaDTO $dto */
-        $dto = $serializer->deserialize($req->getContent(), CreateProgramaDTO::class, 'json');
+        try {
+            /** @var CreateProgramaDTO $dto */
+            $dto = $serializer->deserialize($req->getContent(), CreateProgramaDTO::class, 'json');
+        } catch (NotEncodableValueException $e) {
+            return $this->json(
+                ['errors' => ['general' => ['JSON inválido']]],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
         $violations = $validator->validate($dto);
         if (count($violations) > 0) {
@@ -128,8 +135,15 @@ class ProgramaController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator
     ): JsonResponse {
-        /** @var UpdateProgramaDTO $dto */
-        $dto = $serializer->deserialize($req->getContent(), UpdateProgramaDTO::class, 'json');
+        try {
+            /** @var UpdateProgramaDTO $dto */
+            $dto = $serializer->deserialize($req->getContent(), UpdateProgramaDTO::class, 'json');
+        } catch (NotEncodableValueException $e) {
+            return $this->json(
+                ['errors' => ['general' => ['JSON inválido']]],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
         $violations = $validator->validate($dto);
         if (count($violations) > 0) {
@@ -159,8 +173,15 @@ class ProgramaController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator
     ): JsonResponse {
-        /** @var UpdateProgramaDTO $dto */
-        $dto = $serializer->deserialize($req->getContent(), UpdateProgramaDTO::class, 'json');
+        try {
+            /** @var UpdateProgramaDTO $dto */
+            $dto = $serializer->deserialize($req->getContent(), UpdateProgramaDTO::class, 'json');
+        } catch (NotEncodableValueException $e) {
+            return $this->json(
+                ['errors' => ['general' => ['JSON inválido']]],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
         $violations = $validator->validate($dto);
         if (count($violations) > 0) {

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\Programa\CreateProgramaDTO;
 use App\Dto\Programa\UpdateProgramaDTO;
 use App\Manager\ProgramaManager;
+use App\Service\ValidationErrorFormatter;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,12 +15,14 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/programas', name: 'api_programas_')]
 class ProgramaController extends AbstractController
 {
-    public function __construct(private ProgramaManager $pm) {}
+    public function __construct(
+        private ProgramaManager $pm,
+        private ValidationErrorFormatter $errorFormatter
+    ) {}
 
     // ---------------------------
     // LISTAR (paginado con KNP)
@@ -47,7 +50,7 @@ class ProgramaController extends AbstractController
             $perPage,
             [
                 'pageParameterName'        => 'page',
-                // Evitamos que KNP lea tus ?sort/dir (ya ordenamos en Repo)
+                // Evitamos que KNP lea ?sort/dir (ya ordenamos en Repo)
                 'sortFieldParameterName'   => '_sort',
                 'sortDirectionParameterName'=> '_dir',
             ]
@@ -80,7 +83,7 @@ class ProgramaController extends AbstractController
             $programa,
             Response::HTTP_OK,
             [],
-            ['groups' => ['programa:detail']] // asegúrate de tener este Group en la Entity
+            ['groups' => ['programa:detail']]
         );
     }
 
@@ -99,7 +102,7 @@ class ProgramaController extends AbstractController
         $violations = $validator->validate($dto);
         if (count($violations) > 0) {
             return $this->json(
-                $this->formatViolations($violations),
+                $this->errorFormatter->format($violations), // haciendo uso del service
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -131,7 +134,7 @@ class ProgramaController extends AbstractController
         $violations = $validator->validate($dto);
         if (count($violations) > 0) {
             return $this->json(
-                $this->formatViolations($violations),
+                $this->errorFormatter->format($violations), // haciendo uso del service
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -162,7 +165,7 @@ class ProgramaController extends AbstractController
         $violations = $validator->validate($dto);
         if (count($violations) > 0) {
             return $this->json(
-                $this->formatViolations($violations),
+                $this->errorFormatter->format($violations), // haciendo uso del service
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -188,16 +191,4 @@ class ProgramaController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    // ---------------------------
-    // Helper: formato de errores de validación
-    // ---------------------------
-    private function formatViolations(ConstraintViolationListInterface $violations): array
-    {
-        $errors = [];
-        foreach ($violations as $v) {
-            $field = $v->getPropertyPath() ?: 'general';
-            $errors[$field][] = $v->getMessage();
-        }
-        return ['errors' => $errors];
-    }
 }

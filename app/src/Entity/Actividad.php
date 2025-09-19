@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: ActividadRepository::class)]
 #[ORM\Table(name: 'actividad')]
@@ -15,30 +17,38 @@ class Actividad
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_actividad', type: 'integer')]
+    #[Groups(['actividad:list', 'actividad:detail'])]
+    // Para que JSON exponga "id_actividad" en lugar de "id":
+    #[SerializedName('id_actividad')]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Programa::class, inversedBy: 'actividades')]
     #[ORM\JoinColumn(name: 'id_programa', referencedColumnName: 'id_programa', nullable: false)]
+    // Incluimos el objeto Programa, pero este a su vez solo expondrá lo del grupo programa:rel
+    #[Groups(['actividad:list', 'actividad:detail'])]
     private ?Programa $programa = null;
 
     #[ORM\ManyToOne(targetEntity: TipoActividad::class, inversedBy: 'actividades')]
     #[ORM\JoinColumn(name: 'id_tipo_actividad', referencedColumnName: 'id_tipo_actividad', nullable: false)]
+    #[Groups(['actividad:list', 'actividad:detail'])]
     private ?TipoActividad $tipoActividad = null;
 
     #[ORM\Column(name: 'actividad', type: 'string', length: 200, nullable: false)]
+    #[Groups(['actividad:list', 'actividad:detail'])]
     private string $actividad;
 
     #[ORM\Column(name: 'descripcion', type: Types::TEXT, nullable: true)]
+    // Solo en detalle para no sobrecargar el listado
+    #[Groups(['actividad:detail'])]
     private ?string $descripcion = null;
 
-    // Soft-delete: default true
+    // No exponemos "activo" por defecto
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
     private bool $activo = true;
 
-    /**
-     * @var Collection<int, Comision>
-     */
+    /** @var Collection<int, Comision> */
     #[ORM\OneToMany(targetEntity: Comision::class, mappedBy: 'actividad')]
+    // No la exponemos por defecto para evitar payload grande / recursión.
     private Collection $comisiones;
 
     public function __construct()

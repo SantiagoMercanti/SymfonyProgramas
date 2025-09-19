@@ -14,15 +14,16 @@ class TipoActividad
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'id_tipo_actividad', type: 'integer')] // ajustar el nombre de la columna en MySQL
-    #[Groups(['tipo:list','tipo:detail'])]
+    #[ORM\Column(name: 'id_tipo_actividad', type: 'integer')]
+    // Agregamos 'tipoActividad:rel' para referencias desde Actividad
+    #[Groups(['tipo:list','tipo:detail','tipoActividad:rel'])]
     private ?int $id = null;
 
-    #[Groups(['tipo:list','tipo:detail'])]
     #[ORM\Column(name: 'tipo_actividad', type: 'string', length: 100, nullable: false)]
+    #[Groups(['tipo:list','tipo:detail','tipoActividad:rel'])]
     private string $tipoActividad;
 
-    // Soft-delete: activo = true por defecto (no nullable)
+    // Soft-delete: no lo exponemos en 'tipoActividad:rel' para mantenerlo liviano
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
     #[Groups(['tipo:detail'])]
     private bool $activo = true;
@@ -89,7 +90,7 @@ class TipoActividad
     {
         if ($this->actividades->removeElement($actividad)) {
             if ($actividad->getTipoActividad() === $this) {
-                $actividad->setTipoActividad(null); // ojo: esto solo si el JoinColumn es nullable
+                $actividad->setTipoActividad(null); // ojo si el JoinColumn no es nullable
             }
         }
         return $this;

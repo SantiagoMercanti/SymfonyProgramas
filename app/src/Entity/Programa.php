@@ -16,13 +16,12 @@ class Programa
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_programa', type: 'integer')]
-    #[Groups(['programa:list', 'programa:detail'])]
-    // Renombrar la clave en el JSON:
+    #[Groups(['programa:list', 'programa:detail', 'programa:rel'])]
     #[SerializedName('id_programa')]
     private ?int $id = null;
 
     #[ORM\Column(name: 'programa', type: 'string', length: 100, nullable: true)]
-    #[Groups(['programa:list', 'programa:detail'])]
+    #[Groups(['programa:list', 'programa:detail', 'programa:rel'])]
     private ?string $programa = null;
 
     #[ORM\Column(name: 'descripcion', type: 'text', nullable: true)]

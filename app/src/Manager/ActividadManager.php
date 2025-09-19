@@ -47,14 +47,15 @@ class ActividadManager
         $query = $this->repo->buildListadoQuery($f);
 
         $pagination = $this->paginator->paginate($query, $page, $perPage);
+        $itemCount = $pagination->getTotalItemCount();
 
         return [
             'items' => $pagination->getItems(),
             'meta'  => [
                 'page'    => $page,
                 'perPage' => $perPage,
-                'total'   => (int)$pagination->getTotalItemCount(),
-                'pages'   => (int)ceil(((int)$pagination->getTotalItemCount()) / $perPage),
+                'total'   => (int)$itemCount,
+                'pages'   => (int)ceil(((int)$itemCount) / $perPage),
             ],
         ];
     }
@@ -76,9 +77,10 @@ class ActividadManager
      */
     public function create(CreateActividadDTO $dto): Actividad
     {
+        // Verificar existencial programa y tipo de actividad indicado
         $programa      = $this->resolvePrograma($dto->programaId);
         $tipoActividad = $this->resolveTipoActividad($dto->tipoActividadId);
-
+        // Verificar unicidad estricta
         $this->assertUnique($programa, $tipoActividad, $dto->actividad, null);
 
         $a = new Actividad();
@@ -97,6 +99,8 @@ class ActividadManager
     /**
      * Update/Patch aplicando regla de "eliminada" (activo=false => 404) + unicidad.
      * Se espera que el Controller pase la entidad por ParamConverter.
+     * - Se agrega una flag $isPatch para distinguir entre PUT (todos los campos) y PATCH (solo los que vienen).
+     * -- Sin embargo de momento la función update siempre actua como PATCH.
      */
     public function update(Actividad $actividad, UpdateActividadDTO $dto, bool $isPatch = true): Actividad
     {

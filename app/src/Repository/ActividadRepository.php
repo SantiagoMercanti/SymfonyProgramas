@@ -75,12 +75,12 @@ class ActividadRepository extends ServiceEntityRepository
             $params['q'] = '%'.mb_strtolower($search).'%';
         }
 
-        // Orden seguro
+        // Orden seguro, para evitar SQL Injection
         $orderMap = [
             'id'            => 'a.id',
             'actividad'     => 'a.actividad',
-            'programa'      => 'p.id', // cambia a p.nombre si tu entidad lo tiene
-            'tipoActividad' => 't.id', // cambia a t.nombre si tu entidad lo tiene
+            'programa'      => 'p.id', // p.programa si se quiere ordenar por nombre del programa
+            'tipoActividad' => 't.id', // t.tipoActividad si se quiere ordenar por nombre del tipo
             'activo'        => 'a.activo',
         ];
         $orderBy = $orderMap[$sort] ?? 'a.actividad';
@@ -133,6 +133,7 @@ class ActividadRepository extends ServiceEntityRepository
             'n' => mb_strtolower($nombre),
         ];
 
+        // Excluir un ID (si es update sería correcto que ya exista la misma fila)
         if ($exceptId !== null) {
             $dql .= ' AND a.id <> :id';
             $params['id'] = $exceptId;

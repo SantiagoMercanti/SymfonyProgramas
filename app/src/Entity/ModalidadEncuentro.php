@@ -7,30 +7,33 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: ModalidadEncuentroRepository::class)]
-#[ORM\Table(name: 'modalidad_encuentro')] // ajustar el nombre de la tabla en MySQL
+#[ORM\Table(name: 'modalidad_encuentro')]
 class ModalidadEncuentro
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'id_modalidad_encuentro', type: 'integer')] // ajustar el nombre de la columna en MySQL
-    #[Groups(['mod:list', 'mod:detail'])]
+    #[ORM\Column(name: 'id_modalidad_encuentro', type: 'integer')]
+    #[Groups(['modalidadEncuentro:list', 'modalidadEncuentro:detail', 'modalidadEncuentro:rel'])]
+    #[SerializedName('id_modalidad_encuentro')]
     private ?int $id = null;
 
-    #[ORM\Column(name: 'modalidad_encuentro', type: 'string', length: 50, nullable: true)] // ajustar el nombre de la columna en MySQL
-    #[Groups(['mod:list', 'mod:detail'])]
+    #[ORM\Column(name: 'modalidad_encuentro', type: 'string', length: 50, nullable: true)]
+    #[Groups(['modalidadEncuentro:list', 'modalidadEncuentro:detail', 'modalidadEncuentro:rel'])]
     private ?string $modalidadEncuentro = null;
 
     // Soft-delete: activo = true por defecto (no nullable)
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
-    #[Groups(['mod:detail'])]
+    #[Groups(['modalidadEncuentro:detail'])]
     private bool $activo = true;
 
     /**
      * @var Collection<int, Encuentro>
      */
     #[ORM\OneToMany(targetEntity: Encuentro::class, mappedBy: 'modalidadEncuentro')]
+    #[Groups(['modalidadEncuentro:detail'])]
     private Collection $encuentros;
 
     public function __construct()
@@ -56,7 +59,7 @@ class ModalidadEncuentro
         return $this;
     }
 
-    public function isActivo(): ?bool
+    public function isActivo(): bool
     {
         return $this->activo;
     }

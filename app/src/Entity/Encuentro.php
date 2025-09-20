@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\EncuentroRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: EncuentroRepository::class)]
 #[ORM\Table(name: 'encuentro')]
@@ -12,29 +14,37 @@ class Encuentro
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_encuentro', type: 'integer')]
+    #[Groups(['encuentro:list', 'encuentro:detail', 'encuentro:rel'])]
+    #[SerializedName('id_encuentro')]
     private ?int $id = null;
 
     // FK: id_comision (NOT NULL)
     #[ORM\ManyToOne(targetEntity: Comision::class, inversedBy: 'encuentros')]
     #[ORM\JoinColumn(name: 'id_comision', referencedColumnName: 'id_comision', nullable: false)]
+    #[Groups(['encuentro:list', 'encuentro:detail'])]
     private ?Comision $comision = null;
 
     // FK: id_modalidad_encuentro (NOT NULL)
     #[ORM\ManyToOne(targetEntity: ModalidadEncuentro::class, inversedBy: 'encuentros')]
     #[ORM\JoinColumn(name: 'id_modalidad_encuentro', referencedColumnName: 'id_modalidad_encuentro', nullable: false)]
+    #[Groups(['encuentro:list', 'encuentro:detail'])]
     private ?ModalidadEncuentro $modalidadEncuentro = null;
 
     #[ORM\Column(name: 'encuentro', type: 'string', length: 200, nullable: true)]
+    #[Groups(['encuentro:list', 'encuentro:detail', 'encuentro:rel'])]
     private ?string $encuentro = null;
 
     #[ORM\Column(name: 'fecha_hora_inicio', type: 'datetime', nullable: true)]
+    #[Groups(['encuentro:list', 'encuentro:detail'])]
     private ?\DateTimeInterface $fechaHoraInicio = null;
 
     #[ORM\Column(name: 'fecha_hora_fin', type: 'datetime', nullable: true)]
+    #[Groups(['encuentro:list', 'encuentro:detail'])]
     private ?\DateTimeInterface $fechaHoraFin = null;
 
-    // Soft-delete: default true (no nullable)
+    // Soft-delete: default true
     #[ORM\Column(name: 'activo', type: 'boolean', options: ['default' => true])]
+    #[Groups(['encuentro:list', 'encuentro:detail'])]
     private bool $activo = true;
 
     public function getId(): ?int

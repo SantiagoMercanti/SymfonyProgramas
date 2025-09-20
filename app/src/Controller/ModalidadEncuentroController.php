@@ -16,7 +16,7 @@ class ModalidadEncuentroController extends AbstractController
     public function list(): JsonResponse
     {
         $items = $this->manager->listarActivos();
-        return $this->json($items, 200, [], ['groups' => ['mod:list']]);
+        return $this->json($items, 200, [], ['groups' => ['modalidadEncuentro:list']]);
     }
 
     #[Route('/{id<\d+>}', name: 'detail', methods: ['GET'])]
@@ -26,6 +26,6 @@ class ModalidadEncuentroController extends AbstractController
         if (!$item) {
             return $this->json(['error' => 'No encontrado'], 404);
         }
-        return $this->json($item, 200, [], ['groups' => ['mod:detail']]);
+        return $this->json($item, 200, [], ['groups' => ['modalidadEncuentro:detail']]);
     }
 }

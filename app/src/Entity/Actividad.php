@@ -17,8 +17,7 @@ class Actividad
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_actividad', type: 'integer')]
-    #[Groups(['actividad:list', 'actividad:detail'])]
-    // Para que JSON exponga "id_actividad" en lugar de "id":
+    #[Groups(['actividad:list', 'actividad:detail', 'actividad:rel'])]
     #[SerializedName('id_actividad')]
     private ?int $id = null;
 
@@ -34,7 +33,7 @@ class Actividad
     private ?TipoActividad $tipoActividad = null;
 
     #[ORM\Column(name: 'actividad', type: 'string', length: 200, nullable: false)]
-    #[Groups(['actividad:list', 'actividad:detail'])]
+    #[Groups(['actividad:list', 'actividad:detail', 'actividad:rel'])]
     private string $actividad;
 
     #[ORM\Column(name: 'descripcion', type: Types::TEXT, nullable: true)]
@@ -128,22 +127,21 @@ class Actividad
         return $this->comisiones;
     }
 
-    public function addComisione(Comision $comisione): static
+    public function addComision(Comision $comision): static
     {
-        if (!$this->comisiones->contains($comisione)) {
-            $this->comisiones->add($comisione);
-            $comisione->setActividad($this);
+        if (!$this->comisiones->contains($comision)) {
+            $this->comisiones->add($comision);
+            $comision->setActividad($this);
         }
 
         return $this;
     }
 
-    public function removeComisione(Comision $comisione): static
+    public function removeComision(Comision $comision): static
     {
-        if ($this->comisiones->removeElement($comisione)) {
-            // set the owning side to null (unless already changed)
-            if ($comisione->getActividad() === $this) {
-                $comisione->setActividad(null);
+        if ($this->comisiones->removeElement($comision)) {
+            if ($comision->getActividad() === $this) {
+                $comision->setActividad(null);
             }
         }
 

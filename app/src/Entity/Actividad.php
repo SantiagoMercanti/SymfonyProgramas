@@ -10,8 +10,40 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
+// API Platform
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+
 #[ORM\Entity(repositoryClass: ActividadRepository::class)]
 #[ORM\Table(name: 'actividad')]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/actividades',
+            normalizationContext: [
+                'groups' => ['actividad:list', 'programa:rel', 'tipoActividad:rel']
+            ]
+        ),
+        new Get(
+            uriTemplate: '/actividades/{id}',
+            normalizationContext: [
+                'groups' => ['actividad:detail', 'programa:rel', 'tipoActividad:rel']
+            ]
+        ),
+    ]
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'actividad' => 'partial',
+    'programa.id' => 'exact',
+    'tipoActividad.id' => 'exact',
+])]
+#[ApiFilter(BooleanFilter::class, properties: ['activo'])]
+#[ApiFilter(OrderFilter::class, properties: ['actividad', 'id'])]
 class Actividad
 {
     #[ORM\Id]

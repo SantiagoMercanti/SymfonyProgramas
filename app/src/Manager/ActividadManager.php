@@ -47,7 +47,7 @@ class ActividadManager
         $query = $this->repo->buildListadoQuery($f);
 
         $pagination = $this->paginator->paginate($query, $page, $perPage);
-        $itemCount = $pagination->getTotalItemCount();
+        $itemCount = $pagination->getTotalItemCount(); // Ver si genera una consulta extra
 
         return [
             'items' => $pagination->getItems(),

@@ -4,6 +4,19 @@ namespace App\Dto\Actividad;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+use OpenApi\Attributes as OA;
+
+#[OA\Schema(
+    schema: 'CreateActividadDTO',
+    required: ['programaId','tipoActividadId','actividad'],
+    properties: [
+        new OA\Property(property: 'programaId', type: 'integer', minimum: 1, example: 10),
+        new OA\Property(property: 'tipoActividadId', type: 'integer', minimum: 1, example: 2),
+        new OA\Property(property: 'actividad', type: 'string', minLength: 3, maxLength: 200, example: 'Curso de Symfony'),
+        new OA\Property(property: 'descripcion', type: 'string', nullable: true, maxLength: 2000, example: 'Introducción práctica a Symfony'),
+    ]
+)]
+
 class CreateActividadDTO
 {
     /**

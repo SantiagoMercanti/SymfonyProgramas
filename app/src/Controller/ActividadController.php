@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Attributes as OA;
 
 #[Route('/api/actividades', name: 'api_actividades_')]
 class ActividadController extends AbstractController
@@ -71,6 +72,32 @@ class ActividadController extends AbstractController
     // CREAR
     // ---------------------------
     #[Route('', name: 'create', methods: ['POST'])]
+    #[OA\Post(
+        summary: 'Crea una actividad',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/CreateActividadDTO')
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Actividad creada',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    required: ['id', 'actividad'],
+                    properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 123),
+                        new OA\Property(property: 'actividad', type: 'string', example: 'Curso de Symfony'),
+                        new OA\Property(property: 'descripcion', type: 'string', nullable: true),
+                        new OA\Property(property: 'programa', type: 'object', nullable: true),
+                        new OA\Property(property: 'tipoActividad', type: 'object', nullable: true),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'JSON inválido'),
+            new OA\Response(response: 422, description: 'Validación fallida')
+        ]
+    )]
     public function create(
         Request $req,
         ValidatorInterface $validator,

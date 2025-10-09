@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Attribute\Model;
 
 #[Route('/api/actividades', name: 'api_actividades_')]
 class ActividadController extends AbstractController
@@ -76,21 +77,51 @@ class ActividadController extends AbstractController
         summary: 'Crea una actividad',
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(ref: '#/components/schemas/CreateActividadDTO')
+            content: new OA\JsonContent(ref: new Model(type: CreateActividadDTO::class))
         ),
         responses: [
+            // new OA\Response(
+            //     response: 201,
+            //     description: 'Actividad creada',
+            //     content: new OA\JsonContent(
+            //         type: 'object',
+            //         required: ['id', 'actividad'],
+            //         properties: [
+            //             new OA\Property(property: 'id', type: 'integer', example: 123),
+            //             new OA\Property(property: 'actividad', type: 'string', example: 'Curso de Symfony'),
+            //             new OA\Property(property: 'descripcion', type: 'string', nullable: true),
+            //             new OA\Property(property: 'programa', type: 'object', nullable: true),
+            //             new OA\Property(property: 'tipoActividad', type: 'object', nullable: true),
+            //         ]
+            //     )
+            // )
             new OA\Response(
-                response: 201,
-                description: 'Actividad creada',
+                response: 200,
+                description: 'Actividad',
                 content: new OA\JsonContent(
                     type: 'object',
-                    required: ['id', 'actividad'],
+                    required: ['id_actividad', 'actividad'],
                     properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 123),
+                        new OA\Property(property: 'id_actividad', type: 'integer', example: 20112),
+                        new OA\Property(
+                            property: 'programa',
+                            type: 'object',
+                            nullable: false,
+                            properties: [
+                                new OA\Property(property: 'id_programa', type: 'integer', example: 10),
+                                new OA\Property(property: 'programa', type: 'string', example: 'Cooperativas y Mutuales Escolares'),
+                            ]
+                        ),
+                        new OA\Property(
+                            property: 'tipoActividad',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 2),
+                                new OA\Property(property: 'tipoActividad', type: 'string', example: 'Formación'),
+                            ]
+                        ),
                         new OA\Property(property: 'actividad', type: 'string', example: 'Curso de Symfony'),
-                        new OA\Property(property: 'descripcion', type: 'string', nullable: true),
-                        new OA\Property(property: 'programa', type: 'object', nullable: true),
-                        new OA\Property(property: 'tipoActividad', type: 'object', nullable: true),
+                        new OA\Property(property: 'descripcion', type: 'string', nullable: true, example: 'Introducción práctica a Symfony'),
                     ]
                 )
             ),
@@ -128,6 +159,74 @@ class ActividadController extends AbstractController
     // UPDATE (PUT)
     // ---------------------------
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[OA\Put(
+        summary: 'Actualiza una actividad',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'ID de la actividad a actualizar',
+                schema: new OA\Schema(type: 'integer', example: 123)
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: new Model(type: UpdateActividadDTO::class))
+            // Alternativa equivalente:
+            // content: new OA\JsonContent(ref: '#/components/schemas/UpdateActividadDTO')
+        ),
+        responses: [
+            // new OA\Response(
+            //     response: 200,
+            //     description: 'Actividad actualizada',
+            //     content: new OA\JsonContent(
+            //         type: 'object',
+            //         required: ['id', 'actividad'],
+            //         properties: [
+            //             new OA\Property(property: 'id', type: 'integer', example: 123),
+            //             new OA\Property(property: 'actividad', type: 'string', example: 'Curso de Symfony (actualizado)'),
+            //             new OA\Property(property: 'descripcion', type: 'string', nullable: true),
+            //             new OA\Property(property: 'programa', type: 'object', nullable: true),
+            //             new OA\Property(property: 'tipoActividad', type: 'object', nullable: true),
+            //         ]
+            //     )
+            // )
+            new OA\Response(
+                response: 200,
+                description: 'Actividad',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    required: ['id_actividad', 'actividad'],
+                    properties: [
+                        new OA\Property(property: 'id_actividad', type: 'integer', example: 20112),
+                        new OA\Property(
+                            property: 'programa',
+                            type: 'object',
+                            nullable: false,
+                            properties: [
+                                new OA\Property(property: 'id_programa', type: 'integer', example: 10),
+                                new OA\Property(property: 'programa', type: 'string', example: 'Cooperativas y Mutuales Escolares'),
+                            ]
+                        ),
+                        new OA\Property(
+                            property: 'tipoActividad',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 2),
+                                new OA\Property(property: 'tipoActividad', type: 'string', example: 'Formación'),
+                            ]
+                        ),
+                        new OA\Property(property: 'actividad', type: 'string', example: 'Curso de Symfony'),
+                        new OA\Property(property: 'descripcion', type: 'string', nullable: true, example: 'Introducción práctica a Symfony'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'JSON inválido'),
+            new OA\Response(response: 422, description: 'Validación fallida'),
+            new OA\Response(response: 404, description: 'No encontrada')
+        ]
+    )]
     public function update(
         Actividad $actividad,
         Request $req,

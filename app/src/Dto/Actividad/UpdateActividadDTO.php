@@ -4,6 +4,45 @@ namespace App\Dto\Actividad;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+use OpenApi\Attributes as OA;
+
+#[OA\Schema(
+    schema: 'UpdateActividadDTO',
+    // Como es parcial, no marcamos required
+    properties: [
+        new OA\Property(
+            property: 'programaId',
+            type: 'integer',
+            nullable: true,
+            example: 5,
+            description: 'ID del programa asociado. Opcional.'
+        ),
+        new OA\Property(
+            property: 'tipoActividadId',
+            type: 'integer',
+            nullable: true,
+            example: 2,
+            description: 'ID del tipo de actividad asociado. Opcional.'
+        ),
+        new OA\Property(
+            property: 'actividad',
+            type: 'string',
+            nullable: true,
+            minLength: 3,
+            maxLength: 200,
+            example: 'Curso de Symfony actualizado',
+            description: 'Nombre de la actividad. Opcional.'
+        ),
+        new OA\Property(
+            property: 'descripcion',
+            type: 'string',
+            nullable: true,
+            maxLength: 2000,
+            example: 'Nueva descripción del curso.',
+            description: 'Descripción de la actividad. Opcional.'
+        ),
+    ]
+)]
 class UpdateActividadDTO
 {
     /**
